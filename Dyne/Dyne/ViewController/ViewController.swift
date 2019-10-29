@@ -17,6 +17,9 @@ class ViewController: UIViewController {
     var restaurants: [Restaurant]?
     var dict: [String: UIImage] = [:]
 //    var images: [UIImage] = [UIImage]()
+    
+    var name: String = "Daniel"
+    var phoneNumber: Int = 4045437582
 
     var experiences = [Experience]()
     
@@ -166,6 +169,40 @@ class ViewController: UIViewController {
         
     }
     
+    @IBAction func editProfile(_ sender: Any) {
+        
+        var orderDescription = ""
+        
+        if let data = UserDefaults.standard.value(forKey: self.name) as? String {
+            
+            
+            orderDescription = data
+            
+            
+        }
+        
+        let alert = UIAlertController(title: "Edit your profile", message: orderDescription, preferredStyle: .alert)
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = "Name"
+        }
+        alert.addTextField { (textField) in
+            textField.placeholder = "Phone Number"
+            textField.textContentType = .telephoneNumber
+        }
+        
+        
+        alert.addAction(UIAlertAction(title: "Set", style: .default) { (action) in
+            self.name = alert.textFields?[0].text ?? "Daniel"
+            self.phoneNumber = Int(alert.textFields?[1].text ?? "4045437582") ?? 4045437582
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive) { (action) in
+            
+        })
+
+        self.present(alert, animated: true)
+        
+    }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
@@ -212,7 +249,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             if let restaurant = restaurants?[indexPath.row] {
                 if let nav = self.navigationController {
                     if (restaurant.openHour == 1) {
-                        RestaurantViewController.present(for: restaurant, image: dict[restaurant.name]!, in: nav)
+                        RestaurantViewController.present(for: restaurant, image: dict[restaurant.name]!, userName: self.name, in: nav)
                     }
                     
                 }
@@ -222,7 +259,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                 if (rest.name == experiences[indexPath.row].restaurantName) {
                     getItems(restaurant: rest) { (items) in
                         DispatchQueue.main.async {
-                            OrderViewController.present(for: self.experiences[indexPath.row].includes, restaurant: rest, in: self.navigationController!)
+                            OrderViewController.present(for: self.experiences[indexPath.row].includes, restaurant: rest, name: self.name, in: self.navigationController!)
                         }
                         
                     }
